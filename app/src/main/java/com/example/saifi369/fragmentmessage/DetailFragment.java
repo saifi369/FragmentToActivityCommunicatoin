@@ -1,19 +1,23 @@
 package com.example.saifi369.fragmentmessage;
 
+import android.content.Context;
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 
 public class DetailFragment extends Fragment {
 
     private static final String TAG = "MyTag";
-    private EditText etFirstName,etLastName,etAge;
-    private Button btnDone;
+    private EditText mEtFirstName, mEtLastName, mEtAge;
+    private Button mBtnDone;
+
+    private DetailFragmentListener mListener;
 
     public DetailFragment() {
         // Required empty public constructor
@@ -25,23 +29,35 @@ public class DetailFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
-        etFirstName=rootView.findViewById(R.id.textFirstName);
-        etLastName=rootView.findViewById(R.id.textLastName);
-        etAge=rootView.findViewById(R.id.textAge);
-        btnDone=rootView.findViewById(R.id.done_button);
+        mEtFirstName = rootView.findViewById(R.id.textFirstName);
+        mEtLastName = rootView.findViewById(R.id.textLastName);
+        mEtAge = rootView.findViewById(R.id.textAge);
+        mBtnDone = rootView.findViewById(R.id.done_button);
 
-        btnDone.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                done();
-            }
-        });
+        mBtnDone.setOnClickListener(view -> done());
 
         return rootView;
     }
 
     private void done() {
-        Toast.makeText(getContext(), "Hello from Fragment", Toast.LENGTH_SHORT).show();
+        Person person = new Person();
+        person.setFirstName(mEtFirstName.getText().toString());
+        person.setLastName(mEtLastName.getText().toString());
+        person.setAge(Integer.valueOf(mEtAge.getText().toString()));
+
+        mListener.onDetailFragmentFinish(person);
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+
+        if (context instanceof DetailFragmentListener)
+            mListener = (DetailFragmentListener) context;
+    }
+
+    public interface DetailFragmentListener {
+        void onDetailFragmentFinish(Person person);
     }
 
 }
