@@ -2,8 +2,6 @@ package com.example.saifi369.fragmentmessage;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -13,7 +11,7 @@ import androidx.appcompat.widget.Toolbar;
 public class MainActivity extends AppCompatActivity
         implements DetailFragment.DetailFragmentListener {
 
-    private TextView mTxtOutput;
+    public static final String FRAGMENT_TAG = "output_fragment_tag";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,10 +20,15 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        mTxtOutput = findViewById(R.id.tvShow);
         FloatingActionButton fab = findViewById(R.id.fab);
 
         fab.setOnClickListener(task -> showFragment());
+
+        OutputFragment outputFragment = new OutputFragment();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .add(R.id.output_fragment_container, outputFragment, FRAGMENT_TAG)
+                .commit();
     }
 
     private void showFragment() {
@@ -39,14 +42,13 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    public void onClick(Person person) {
-        Toast.makeText(this, "Testing", Toast.LENGTH_SHORT).show();
-    }
-
-
     @Override
     public void onDetailFragmentFinish(Person person) {
-        mTxtOutput.setText(person.getFirstName());
+
+        OutputFragment fragment = (OutputFragment) getSupportFragmentManager()
+                .findFragmentByTag(FRAGMENT_TAG);
+
+        fragment.displayPerson(person);
 
         Log.d("MyTag", "onDetailFragmentFinish: Person: " + person.toString());
     }
